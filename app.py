@@ -13,7 +13,6 @@ def predict(img):
 title = "Leafy Greens Classifier"
 description = "A greens classifier trained on a dataset with fastai. Test demo for Gradio and HuggingFace Spaces."
 article="<p style='text-align: center'><a href='https://tmabraham.github.io/blog/gradio_hf_spaces_tutorial' target='_blank'>Blog post</a></p>"
-examples = ['siamese.jpg']
 interpretation='default'
 enable_queue=True
 
