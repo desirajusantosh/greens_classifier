@@ -16,5 +16,5 @@ article="<p style='text-align: center'><a href='https://tmabraham.github.io/blog
 interpretation='default'
 enable_queue=True
 
-gr.Interface(fn=predict,inputs=gr.inputs.Image(shape=(512, 512)),outputs=gr.outputs.Label(num_top_classes=3),title=title,description=description,article=article,examples=examples,interpretation=interpretation,enable_queue=enable_queue).launch()
+gr.Interface(fn=predict,inputs=gr.inputs.Image(shape=(512, 512)),outputs=gr.outputs.Label(num_top_classes=3),title=title,description=description,article=article,interpretation=interpretation,enable_queue=enable_queue).launch()
 
