@@ -1,0 +1,9 @@
+remote_theme: daviddarness/alembic@main
+plugins:
+- jekyll-remote-theme
+
+title: SD
+description: client interface demo
+
+author:
+  name: SD
