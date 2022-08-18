@@ -1,9 +1,9 @@
-remote_theme: pages-themes/hacker
+remote_theme: daviddarnes/alembic@main
 plugins:
 - jekyll-remote-theme
 
-title: SD
-description: client interface demo
+title: Jeremy Howard
+description: Some basic examples of client interfaces to a computer vision API
 
 author:
-  name: SD
+  name: Jeremy Howard
