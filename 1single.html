@@ -3,22 +3,120 @@ title: 1. Single file
 layout: default
 ---
 
-<input id="photo" type="file">
-<div id="results"></div>
+#<input id="photo" type="file">
+#<div id="results"></div>
+#<script>
+#  async function loaded(reader) {
+#    const response = await fetch('https://dsb7-greens-classifier.hf.space/+/api/predict/', {
+#      method: "POST", body: JSON.stringify({ "data": [reader.result] }),
+#      headers: { "Content-Type": "application/json" }
+#    });
+#    const json = await response.json();
+#    const label = json['data'][0]['confidences'][0]['label'];
+#    results.innerHTML = `<br/><img src="${reader.result}" width="300"> <p>${label}</p>`
+#  }
+#  function read() {
+#    const reader = new FileReader();
+#    reader.addEventListener('load', () => loaded(reader))
+#    reader.readAsDataURL(photo.files[0]);
+#  }
+#  photo.addEventListener('input', read);
+#</script>
+
+
+<!doctype html>
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<title>Food Image Classifier</title>
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body>
+
+<h1>Food Image Classifier</h1>
+<h3>Simple HTML+JS app that classifies food images</h3>
+
+<p>
+This is a static web page that fetches the responses from the HF+Gradio API.
+<br/>
+No error handling etc., use the browser inspector instead !
+</p>
+
+<p>
+<h4> Please select an image on your device below. The inference happens automatically after a file selection</h4>
+</p>
+
+<br/>
+
+<input id="image-input" type="file" />
+
+<div id="result-container">
+  <div>
+    <h4>
+	No predictions yet
+    </h4>
+  </div>
+</div>
+
 <script>
-  async function loaded(reader) {
-    const response = await fetch('https://dsb7-greens-classifier.hf.space/+/api/predict/', {
-      method: "POST", body: JSON.stringify({ "data": [reader.result] }),
-      headers: { "Content-Type": "application/json" }
+var apiURL = 'https://dsb7-greens-classifier.hf.space/+/api/predict/';
+
+var input = document.getElementById('image-input');
+var result = document.getElementById('result-container');
+
+input.onchange = function() {
+  const reader = new FileReader();
+  reader.onloadend = function() {
+    var b64 = reader.result;
+    fetch_gradio_response(b64)
+      .then(format_response_predictions);
+  };
+
+  const file = input.files[0];
+  reader.readAsDataURL(file);
+};
+
+const fetch_gradio_response = function(img64) {
+  return fetch(apiURL, {
+    method: "POST",
+    body: JSON.stringify({
+      "data": [img64]
+    }),
+    headers: {
+      "Content-Type": "application/json"
+    }
+  }).then(function(response) {
+    return response.json();
+  })
+};
+
+const format_response_predictions = function(json_response) {
+
+  const resultDiv = document.createElement('div');
+  resultDiv.setAttribute('id', 'response-result');
+
+  json_response.data.forEach(function(d) {
+    const predictedText = `Predicted label : ${d.label}`
+
+    const predictedLabelNode = document.createElement('h4');
+    predictedLabelNode.textContent = predictedText;
+    resultDiv.appendChild(predictedLabelNode);
+
+    const confidencesUL = document.createElement('ul');
+
+    d.confidences.forEach(function(c) {
+      confidenceText = `${c.label}: ${c.confidence*100}%`
+
+      var confidenceLI = document.createElement('li');
+      confidenceLI.textContent = confidenceText;
+      confidencesUL.appendChild(confidenceLI);
     });
-    const json = await response.json();
-    const label = json['data'][0]['confidences'][0]['label'];
-    results.innerHTML = `<br/><img src="${reader.result}" width="300"> <p>${label}</p>`
-  }
-  function read() {
-    const reader = new FileReader();
-    reader.addEventListener('load', () => loaded(reader))
-    reader.readAsDataURL(photo.files[0]);
-  }
-  photo.addEventListener('input', read);
+
+    resultDiv.appendChild(confidencesUL);
+  });
+  result.replaceChild(resultDiv, result.firstElementChild);
+};
 </script>
+
+</body>
+</html>
